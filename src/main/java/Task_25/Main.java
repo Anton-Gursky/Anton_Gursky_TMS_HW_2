@@ -4,24 +4,22 @@ import java.sql.*;
 
 public class Main {
 
-    public static final String USER_NAME = "User";
-    public static final String PASSWORD = "root";
-    public static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/students";
+    public static MySQLDriverManager driverManager = MySQLDriverManager.getInstance();
     public static Connection connection;
     public static Statement statement;
+    public static ResultSet resultSet;
 
     static {
         try {
-            connection = DriverManager.getConnection(CONNECTION_URL, USER_NAME, PASSWORD);
+            connection = driverManager.getConnection();
             statement = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) {
 
-        Class.forName("com.mysql.cj.jdbc.Driver");
         createTableOfStudents();
 
         //Добавление данных в таблицу
@@ -33,7 +31,21 @@ public class Main {
         deleteStudentFromTable("Alex");
 
         //Получение данных из таблицы
-        printTableInfo("groupStudents");
+        printTableInfo();
+
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+            if (statement != null) {
+                statement.close();
+            }
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void createTableOfStudents() {
@@ -74,10 +86,10 @@ public class Main {
         }
     }
 
-    public static void printTableInfo(String tableName) {
+    public static void printTableInfo() {
 
         try {
-            ResultSet resultSet = statement.executeQuery("SELECT * From " + tableName);
+            resultSet = statement.executeQuery("SELECT * From " + "groupStudents");
 
             //Выведение полученных данных на консоль
             while (resultSet.next()) {
