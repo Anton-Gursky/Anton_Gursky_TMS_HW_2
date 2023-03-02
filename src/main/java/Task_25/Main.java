@@ -5,18 +5,6 @@ import java.sql.*;
 public class Main {
 
     public static MySQLDriverManager driverManager = MySQLDriverManager.getInstance();
-    public static Connection connection;
-    public static Statement statement;
-    public static ResultSet resultSet;
-
-    static {
-        try {
-            connection = driverManager.getConnection();
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) {
 
@@ -32,24 +20,17 @@ public class Main {
 
         //Получение данных из таблицы
         printTableInfo();
-
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-            if (statement != null) {
-                statement.close();
-            }
-            if (resultSet != null) {
-                resultSet.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void createTableOfStudents() {
+
+        Connection connection = null;
+        Statement statement = null;
+
         try {
+            connection = driverManager.getConnection();
+            statement = connection.createStatement();
+
             statement.executeUpdate("drop table groupStudents");
 
             //Создание таблицы студентов
@@ -61,34 +42,81 @@ public class Main {
             );
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void addStudentToTable(int id, String name, String surname) {
 
+        Connection connection = null;
+        Statement statement = null;
+
         try {
+            connection = driverManager.getConnection();
+            statement = connection.createStatement();
+
             statement.executeUpdate("insert into students.groupStudents(id, name, surname)" +
                     "value (" + id + ", '" + name + "', '" + surname + "')"
             );
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void deleteStudentFromTable(String name) {
 
+        Connection connection = null;
+
         try {
+            connection = driverManager.getConnection();
+
             PreparedStatement st = connection.prepareStatement("DELETE FROM groupStudents WHERE name = ?");
             st.setString(1, name);
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public static void printTableInfo() {
 
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+
         try {
+            connection = driverManager.getConnection();
+            statement = connection.createStatement();
+
             resultSet = statement.executeQuery("SELECT * From " + "groupStudents");
 
             //Выведение полученных данных на консоль
@@ -98,6 +126,20 @@ public class Main {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
