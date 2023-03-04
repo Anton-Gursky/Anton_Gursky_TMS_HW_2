@@ -6,27 +6,24 @@ public class Order {
     private int quantity;
     private int price;
 
-    public Order() {
-    }
-
     public String getOrderName() {
         return orderName;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public int getPrice() {
-        return price;
     }
 
     public void setOrderName(String orderName) {
         this.orderName = orderName;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getPrice() {
+        return price;
     }
 
     public void setPrice(int price) {
