@@ -31,10 +31,10 @@ public class Main {
             connection = driverManager.getConnection();
             statement = connection.createStatement();
 
-            statement.executeUpdate("drop table groupStudents");
+            statement.executeUpdate("delete from groupStudents");
 
             //Создание таблицы студентов
-            statement.executeUpdate("create table groupStudents (" +
+            statement.executeUpdate("create table if not exists groupStudents (" +
                     "id int not null auto_increment," +
                     "name varchar(45) not null," +
                     "surname varchar(45)," +
@@ -59,15 +59,14 @@ public class Main {
     public static void addStudentToTable(int id, String name, String surname) {
 
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement st = null;
 
         try {
             connection = driverManager.getConnection();
-            statement = connection.createStatement();
 
-            statement.executeUpdate("insert into students.groupStudents(id, name, surname)" +
-                    "value (" + id + ", '" + name + "', '" + surname + "')"
-            );
+            st = connection.prepareStatement("insert into students.groupStudents(id, name, surname)" +
+                    "value (" + id + ", '" + name + "', '" + surname + "')");
+            st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -75,8 +74,8 @@ public class Main {
                 if (connection != null) {
                     connection.close();
                 }
-                if (statement != null) {
-                    statement.close();
+                if (st != null) {
+                    st.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -87,11 +86,12 @@ public class Main {
     public static void deleteStudentFromTable(String name) {
 
         Connection connection = null;
+        PreparedStatement st = null;
 
         try {
             connection = driverManager.getConnection();
 
-            PreparedStatement st = connection.prepareStatement("DELETE FROM groupStudents WHERE name = ?");
+            st = connection.prepareStatement("DELETE FROM groupStudents WHERE name = ?");
             st.setString(1, name);
             st.executeUpdate();
         } catch (SQLException e) {
@@ -100,6 +100,9 @@ public class Main {
             try {
                 if (connection != null) {
                     connection.close();
+                }
+                if (st != null) {
+                    st.close();
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
