@@ -1,0 +1,34 @@
+CREATE SCHEMA IF NOT EXISTS `library`;
+
+CREATE TABLE  IF NOT EXISTS author(
+id INT PRIMARY KEY auto_increment,
+name varchar(255) not null,
+surname varchar(255) not null
+);
+
+CREATE TABLE IF NOT EXISTS book(
+id INT PRIMARY KEY auto_increment,
+title varchar(255) not null,
+author_id int,
+pages int
+);
+
+INSERT INTO author (id, name, surname) values (1, 'Alexander', 'Pushkin');
+INSERT INTO author (id, name, surname) values (2, 'Arthur', 'Doyle');
+INSERT INTO author (id, name, surname) values (3, 'Den', 'Braun');
+INSERT INTO author (id, name, surname) values (4, 'Patric', 'OBrain');
+
+INSERT INTO book (id, title, author_id, pages) values (1, 'AAA', 1, 120);
+INSERT INTO book (id, title, author_id, pages) values (2, 'BBB', 1, 305);
+INSERT INTO book (id, title, author_id, pages) values (3, 'CCC', 2, 400);
+INSERT INTO book (id, title, author_id, pages) values (4, 'DDD', null, null);
+INSERT INTO book (id, title, author_id, pages) values (5, "EEE", 4, 200);
+
+-- Вывод информации о книгах, у которых кол-во страниц > 300;
+SELECT * FROM book WHERE pages >= 300;
+
+-- Вывод информации об авторах и их книгах (через JOIN)
+SELECT author.id, author.name, author.surname, book.title, book.pages FROM author LEFT JOIN book ON author.id = book.author_id;
+
+-- Вывод информации об авторах, у которых есть хотя бы одна книга с кол-вом страниц > 300
+SELECT author.id, author.name, author.surname FROM author JOIN book ON author.id = book.author_id WHERE book.pages > 300;
